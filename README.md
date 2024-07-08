@@ -1,6 +1,6 @@
 # vue-pokemon
 # Project setup
 ```
-npm insatll
+npm install
 npm run serve
 ```
