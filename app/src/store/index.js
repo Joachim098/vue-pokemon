@@ -10,7 +10,7 @@ db.register(Pokemon);
 
 export default createStore({
   plugins: [VuexORM.install(db)],
-  
+
   state: {
     filterPokemons: '',
     filterByExp: {},
@@ -72,8 +72,8 @@ export default createStore({
 
             //Converting some fields into proper sentence case for better readability
             let name = pokemon.name[0].toUpperCase() + pokemon.name.slice(1);
-            let abilities = pokemonData.data.abilities.map(ab => ab.ability.name[0].toUpperCase() + ab.ability.name.slice(1))
-            let types = pokemonData.data.types.map(tp => tp.type.name[0].toUpperCase() + tp.type.name.slice(1))
+            let abilities = pokemonData.data.abilities.map(ab => ab.ability.name[0].toUpperCase() + ab.ability.name.slice(1));
+            let types = pokemonData.data.types.map(tp => tp.type.name[0].toUpperCase() + tp.type.name.slice(1));
 
             return {
               name: name,
@@ -87,7 +87,7 @@ export default createStore({
             };
           })
         );
-        Pokemon.insert({ data: pokemons })
+        Pokemon.insert({ data: pokemons });
         commit('setLoading', false);
       }
       catch(error){
@@ -100,7 +100,6 @@ export default createStore({
       commit('setFilterPokemons', filterPokemon);
     },
     fetchFilterByExp({commit}, exp){
-      console.log(exp);
       commit('setFilterByExp', exp);
     }
   },
