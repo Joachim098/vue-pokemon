@@ -1,9 +1,17 @@
 import axios from 'axios';
 import { createStore } from 'vuex'
+import VuexORM from '@vuex-orm/core';
+import Pokemon from '@/models/pokemon';
+
+//creating instance of db
+const db = new VuexORM.Database();
+//registering pokemon model to db
+db.register(Pokemon);
 
 export default createStore({
+  plugins: [VuexORM.install(db)],
+  
   state: {
-    pokemons: [],
     filterPokemons: '',
     filterByExp: {},
     loading: false,
@@ -13,15 +21,20 @@ export default createStore({
   getters: {
     getPokemons: ((state) => {
       if(state.filterPokemons != ''){
-        return state.pokemons.filter(pokemon => pokemon.name.toLowerCase().includes(state.filterPokemons.toLowerCase()));
+        return Pokemon.query()
+        .where('name', value => value.toLowerCase().includes(state.filterPokemons.toLowerCase()))
+        .get();
       }
       else if(state.filterByExp.min && state.filterByExp.max){
         let min = parseInt(state.filterByExp.min);
         let max = parseInt(state.filterByExp.max);
-        return state.pokemons.filter(pokemon => pokemon.experience >= min && pokemon.experience <= max);
+
+        return Pokemon.query()
+        .where('experience', value => value >= min && value <= max)
+        .get();
       }
       else{
-        return state.pokemons;
+        return Pokemon.all();
       }
     }),
     getLoading: (state) => state.loading,
@@ -29,9 +42,6 @@ export default createStore({
   },
 
   mutations: {
-    setPokemons(state, pokemons){
-      state.pokemons = pokemons;
-    },
     setFilterPokemons(state, filter){
       state.filterPokemons = filter;
     },
@@ -77,7 +87,7 @@ export default createStore({
             };
           })
         );
-        commit('setPokemons', pokemons);
+        Pokemon.insert({ data: pokemons })
         commit('setLoading', false);
       }
       catch(error){
